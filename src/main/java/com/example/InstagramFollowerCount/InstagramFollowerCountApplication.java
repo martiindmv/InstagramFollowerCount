@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class InstagramFollowerCountApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(InstagramFollowerCountApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(InstagramFollowerCountApplication.class, args);
+    }
 }
