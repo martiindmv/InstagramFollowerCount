@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Instagram Follower Count</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        h1 {
+            text-align: center;
+            font-size: 2em; /* Change the font size */
+            font-weight: bold; /* Make the font bold */
+        }
+        div {
+            text-align: center;
+        }
+        .rcontent {
+            background-color: #000000;
+        }
+    </style>
+</head>
+<body>
+<h1>Instagram Follower Count</h1>
+<div class="content">
+    <form action="/getUsername" method="post">
+        <label for="username">Enter Instagram Username:</label>
+        <input type="text" id="username" name="username">
+        <button type="submit">Get Username</button>
+    </form>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">You Follow</th>
+        <th scope="col">Follows You</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+    </tr>
+    <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+    </tr>
+    <tr>
+        <th scope="row">3</th>
+        <td>Larry</td>
+        <td>the Bird</td>
+        <td>@twitter</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
