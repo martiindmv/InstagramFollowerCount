@@ -27,6 +27,22 @@
         <button type="submit">Get Username</button>
     </form>
 </div>
+<div class="row">
+    <div class="col text-center">
+        <form action="/uploadFollowers" method="post" enctype="multipart/form-data">
+            <input type="file" id="followers" name="followers" style="display: none;" onchange="document.getElementById('followersName').textContent = this.files[0].name">
+            <button type="button" onclick="document.getElementById('followers').click()">Upload your Instagram Followers</button>
+            <span id="followersName"></span>
+        </form>
+    </div>
+    <div class="col text-center">
+        <form action="/uploadFollowing" method="post" enctype="multipart/form-data">
+            <input type="file" id="following" name="following" style="display: none;" onchange="document.getElementById('followingName').textContent = this.files[0].name">
+            <button type="button" onclick="document.getElementById('following').click()">Upload your Instagram Following</button>
+            <span id="followingName"></span>
+        </form>
+    </div>
+</div>
 <table class="table table-striped">
     <thead>
     <tr>
