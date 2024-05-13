@@ -17,12 +17,10 @@ public class JsonArrays {
     }
 
     public void setArrayFollowers(JSONArray jsonArrayFollowers) {
-        System.out.println("setArrayFollowers is working!");
         this.jsonArrayFollowers = jsonArrayFollowers;
     }
 
     public void setArrayFollowing(JSONArray jsonArrayFollowing) {
-        System.out.println("setArrayFollowing is working!");
         this.jsonArrayFollowing = jsonArrayFollowing;
     }
 }
