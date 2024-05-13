@@ -8,20 +8,12 @@ public class JsonArrays {
     private JSONArray jsonArrayFollowers;
     private JSONArray jsonArrayFollowing;
 
-    public JSONArray getFollowersArray() {
+    public JSONArray getWhoFollowsYouArray() {
         return jsonArrayFollowers;
     }
 
-    public JSONArray getFollowingArray() {
+    public JSONArray getWhoYouAreFollowingArray() {
         return jsonArrayFollowing;
-    }
-
-    public int getFollowersArraySize() {
-        return jsonArrayFollowers.length();
-    }
-
-    public int getFollowingArraySize() {
-        return jsonArrayFollowing.length();
     }
 
     public void setArrayFollowers(JSONArray jsonArrayFollowers) {

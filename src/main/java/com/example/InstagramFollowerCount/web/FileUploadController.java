@@ -17,6 +17,7 @@ import java.io.IOException;
 public class FileUploadController {
     @Autowired
     private JsonArrays jsonArrays;
+
     private MapToJson mapToJson = new MapToJson();
     private Comparator comparator = new Comparator();
 
@@ -29,7 +30,6 @@ public class FileUploadController {
 
         //Assign an object in JSONArrays file in order to compare after
         jsonArrays.setArrayFollowers(followersArray);
-
 
         return "redirect:/";
     }
@@ -45,6 +45,7 @@ public class FileUploadController {
         jsonArrays.setArrayFollowing(followingArray);
 
         comparator.createCommonMap(jsonArrays);
+
         return "redirect:/";
     }
 

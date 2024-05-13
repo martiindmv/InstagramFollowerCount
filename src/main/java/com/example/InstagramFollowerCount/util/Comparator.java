@@ -4,21 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
 public class Comparator {
-    private HashMap<String, String> followersMap;
-    private HashMap<String, String> followingMap;
-
     public void createCommonMap(JsonArrays jsonArray) {
-        followingMap = valueHrefExtractor(jsonArray.getFollowingArray(), " follows you");
-        followersMap = valueHrefExtractor(jsonArray.getFollowersArray(), " you follow");
-
-        Set<String> followingSet = new HashSet<>(followingMap.keySet());
-        Set<String> followersSet = new HashSet<>(followersMap.keySet());
+        Set<String> followersSet = valueHrefExtractor(jsonArray.getWhoFollowsYouArray());
+        Set<String> followingSet = valueHrefExtractor(jsonArray.getWhoYouAreFollowingArray());
 
         // Find the difference (elements in followingSet but not in followersSet)
         Set<String> difference = new HashSet<>(followingSet);
@@ -27,15 +20,14 @@ public class Comparator {
         System.out.println("Users you follow who don't follow you: " + difference);
     }
 
-    private HashMap<String, String> valueHrefExtractor(JSONArray jsonArray, String follow) {
-        HashMap<String, String> arrayToMap = new HashMap<>();
+    private Set<String> valueHrefExtractor(JSONArray jsonArray) {
+        Set<String> arrayToSet = new HashSet<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject stringListData = jsonArray.getJSONObject(i).getJSONArray("string_list_data").getJSONObject(0);
-            String href = stringListData.getString("href");
             String value = stringListData.getString("value");
-            arrayToMap.put(value, href);
+            arrayToSet.add(value);
         }
-        return arrayToMap;
+        return arrayToSet;
     }
 }
