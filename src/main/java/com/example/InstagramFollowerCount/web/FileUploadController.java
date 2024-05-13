@@ -1,6 +1,10 @@
 package com.example.InstagramFollowerCount.web;
 
-import com.example.InstagramFollowerCount.util.JSONOperations;
+import com.example.InstagramFollowerCount.util.Comparator;
+import com.example.InstagramFollowerCount.util.JsonArrays;
+import com.example.InstagramFollowerCount.util.MapToJson;
+import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,16 +15,21 @@ import java.io.IOException;
 
 @Controller
 public class FileUploadController {
-
-    private JSONOperations jsonOperations = new JSONOperations();
+    @Autowired
+    private JsonArrays jsonArrays;
+    private MapToJson mapToJson = new MapToJson();
+    private Comparator comparator = new Comparator();
 
     @PostMapping("/uploadFollowers")
     public String handleFollowersList(@RequestParam("followers") MultipartFile file) throws IOException {
+        String contentFollowers = new String(file.getInputStream().readAllBytes());
 
-        String contentFollwers = new String(file.getInputStream().readAllBytes());
-        jsonOperations.readFileArray(contentFollwers);
+        //Mapping the file to a JSON object
+        JSONArray followersArray = mapToJson.mapFileToJsonArray(contentFollowers);
 
-        String fileName = file.getOriginalFilename();
+        //Assign an object in JSONArrays file in order to compare after
+        jsonArrays.setArrayFollowers(followersArray);
+
 
         return "redirect:/";
     }
@@ -28,10 +37,14 @@ public class FileUploadController {
     @PostMapping("/uploadFollowing")
     public String handleFollowingList(@RequestParam("following") MultipartFile file) throws IOException {
         String contentFollowing = new String(file.getInputStream().readAllBytes());
-        String jsonKey = jsonOperations.getJsonObjectKey(contentFollowing);
-        jsonOperations.readFileWithKey(contentFollowing, jsonKey);
 
+        //Mapping the file to a JSON object
+        JSONArray followingArray = mapToJson.mapFileWithKeyToJsonArray(contentFollowing);
 
+        //Assign an object in JSONArrays file in order to compare after
+        jsonArrays.setArrayFollowing(followingArray);
+
+        comparator.createCommonMap(jsonArrays);
         return "redirect:/";
     }
 
