@@ -9,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -35,6 +37,25 @@ public class FileUploadController {
         jsonArrays.setArrayFollowers(followersArray);
 
         return "redirect:/";
+    }
+
+    //TODO Create maybe two more methods that accept a string format.
+
+    @PostMapping("/uploadStringFormat")
+    public void postJsonTextFollowers(@RequestBody Map<String, String> body) {
+        String jsonFollowers = body.get("jsonFollowers");
+        String jsonFollowing = body.get("jsonFollowing");
+        //Mapping to a JSON object
+        JSONArray followersArray = mapToJson.mapFileToJsonArray(jsonFollowers);
+        JSONArray followingArray = mapToJson.mapFileWithKeyToJsonArray(jsonFollowing);
+
+        //Assign an object in JSONArrays file in order to compare after
+        jsonArrays.setArrayFollowers(followersArray);
+
+        jsonArrays.setArrayFollowing(followingArray);
+
+        comparator.createCommonMap(jsonArrays);
+
     }
 
     @PostMapping("/uploadFollowing")
