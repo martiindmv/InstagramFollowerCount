@@ -1,4 +1,4 @@
-package com.example.InstagramFollowerCount.controler;
+package com.example.InstagramFollowerCount.controller;
 
 import com.example.InstagramFollowerCount.util.JsonArrays;
 import org.json.JSONArray;
