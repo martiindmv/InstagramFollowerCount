@@ -1,4 +1,4 @@
-package com.example.InstagramFollowerCount.web;
+package com.example.InstagramFollowerCount.controler;
 
 import com.example.InstagramFollowerCount.util.Comparator;
 import com.example.InstagramFollowerCount.util.JsonArrays;
@@ -48,6 +48,8 @@ public class FileUploadController {
         jsonArrays.setArrayFollowing(followingArray);
 
         comparator.createCommonMap(jsonArrays);
+
+        ApiController apiController = new ApiController(jsonArrays);
 
         return "redirect:/";
     }
