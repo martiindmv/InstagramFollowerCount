@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JsonArrays {
+public class UserRelationshipData {
     private JSONArray jsonArrayFollowers;
     private JSONArray jsonArrayFollowing;
 

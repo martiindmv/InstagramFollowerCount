@@ -5,14 +5,14 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MapToJson {
-    public JSONArray mapFileToJsonArray(String jsonContent) {
+public class JsonArrayMapper {
+    public JSONArray mapFileContentToJsonArray(String jsonContent) {
         JSONArray jsonArray = new JSONArray(jsonContent);
         System.out.println("Followers Completed!");
         return jsonArray;
     }
 
-    public JSONArray mapFileWithKeyToJsonArray(String jsonContent) {
+    public JSONArray mapFileContentWithKeyToJsonArray(String jsonContent) {
         JSONObject jsonObject = new JSONObject(jsonContent);
         if (jsonObject.has("relationships_following")) {
             JSONArray jsonArray = jsonObject.getJSONArray("relationships_following");

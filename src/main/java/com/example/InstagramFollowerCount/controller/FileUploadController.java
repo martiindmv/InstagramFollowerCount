@@ -1,8 +1,8 @@
 package com.example.InstagramFollowerCount.controller;
 
-import com.example.InstagramFollowerCount.util.Comparator;
-import com.example.InstagramFollowerCount.util.JsonArrays;
-import com.example.InstagramFollowerCount.util.MapToJson;
+import com.example.InstagramFollowerCount.util.InstagramUserComparator;
+import com.example.InstagramFollowerCount.util.UserRelationshipData;
+import com.example.InstagramFollowerCount.util.JsonArrayMapper;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,42 +20,44 @@ import java.util.Set;
 @Controller
 public class FileUploadController {
     @Autowired
-    private JsonArrays jsonArrays;
+    private UserRelationshipData userRelationshipData;
     @Autowired
-    private MapToJson mapToJson;
+    private JsonArrayMapper jsonArrayMapper;
     @Autowired
-    private Comparator comparator;
+    private InstagramUserComparator instagramUserComparator;
 
     @PostMapping("/uploadFollowers")
     public String handleFollowersList(@RequestParam("followers") MultipartFile file) throws IOException {
         String contentFollowers = new String(file.getInputStream().readAllBytes());
 
         //Mapping the file to a JSON object
-        JSONArray followersArray = mapToJson.mapFileToJsonArray(contentFollowers);
+        JSONArray followersArray = jsonArrayMapper.mapFileContentToJsonArray(contentFollowers);
 
         //Assign an object in JSONArrays file in order to compare after
-        jsonArrays.setArrayFollowers(followersArray);
+        userRelationshipData.setArrayFollowers(followersArray);
 
         return "redirect:/";
     }
 
     //TODO Create maybe two more methods that accept a string format.
+    //TODO we correctly process the message however the message appears as not resolved by thymeleaf.
 
     @PostMapping("/uploadStringFormat")
-    public void postJsonTextFollowers(@RequestBody Map<String, String> body) {
+    public String postJsonText(@RequestBody Map<String, String> body) {
         String jsonFollowers = body.get("jsonFollowers");
         String jsonFollowing = body.get("jsonFollowing");
         //Mapping to a JSON object
-        JSONArray followersArray = mapToJson.mapFileToJsonArray(jsonFollowers);
-        JSONArray followingArray = mapToJson.mapFileWithKeyToJsonArray(jsonFollowing);
+        JSONArray followersArray = jsonArrayMapper.mapFileContentToJsonArray(jsonFollowers);
+        JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(jsonFollowing);
 
         //Assign an object in JSONArrays file in order to compare after
-        jsonArrays.setArrayFollowers(followersArray);
+        userRelationshipData.setArrayFollowers(followersArray);
 
-        jsonArrays.setArrayFollowing(followingArray);
+        userRelationshipData.setArrayFollowing(followingArray);
 
-        comparator.createCommonMap(jsonArrays);
+        instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
 
+        return "redirect:/";
     }
 
     @PostMapping("/uploadFollowing")
@@ -63,21 +65,21 @@ public class FileUploadController {
         String contentFollowing = new String(file.getInputStream().readAllBytes());
 
         //Mapping the file to a JSON object
-        JSONArray followingArray = mapToJson.mapFileWithKeyToJsonArray(contentFollowing);
+        JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(contentFollowing);
 
         //Assign an object in JSONArrays file in order to compare after
-        jsonArrays.setArrayFollowing(followingArray);
+        userRelationshipData.setArrayFollowing(followingArray);
 
-        comparator.createCommonMap(jsonArrays);
+        instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
 
-        ApiController apiController = new ApiController(jsonArrays);
+        ApiController apiController = new ApiController(userRelationshipData);
 
         return "redirect:/";
     }
 
     @GetMapping("/")
     public String displayTable(Model model) {
-        Set<String> difference = comparator.getDifference();
+        Set<String> difference = instagramUserComparator.getNotFollowingBack();
         model.addAttribute("difference", difference);
         return "index";
     }

@@ -1,4 +1,0 @@
-{
-    "jsonFollowers": "[{ \"title\": \"\", \"media_list_data\": [], \"string_list_data\": [{ \"href\": \"https://www.instagram.com/st.molodtsov\", \"value\": \"st.molodtsov\", \"timestamp\": 1714580639 }]}]",
-    "jsonFollowing": "{ \"relationships_following\": [{ \"title\": \"\", \"media_list_data\": [], \"string_list_data\": [{ \"href\": \"https://www.instagram.com/st.molodtsov\", \"value\": \"st.molodtsov\", \"timestamp\": 1714580639 }] }, { \"title\": \"\", \"media_list_data\": [], \"string_list_data\": [{ \"href\": \"https://www.instagram.com/vadim.kydaan\", \"value\": \"vadim.kydaan\", \"timestamp\": 1713992529 }] }]}"
-}
