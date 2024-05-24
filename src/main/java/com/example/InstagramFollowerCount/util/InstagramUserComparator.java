@@ -1,5 +1,7 @@
 package com.example.InstagramFollowerCount.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -9,9 +11,10 @@ import java.util.Set;
 
 @Component
 public class InstagramUserComparator {
+    private static final Logger LOGGER = LogManager.getLogger(InstagramUserComparator.class);
     private Set<String> notFollowingBack;
 
-    public Set<String> findNonFollowingBackUsers (UserRelationshipData userRelationshipData) {
+    public Set<String> findNonFollowingBackUsers(UserRelationshipData userRelationshipData) {
         Set<String> followersSet = extractUsernamesFromJsonArray(userRelationshipData.getWhoFollowsYouArray());
         Set<String> followingSet = extractUsernamesFromJsonArray(userRelationshipData.getWhoYouAreFollowingArray());
 
@@ -19,11 +22,11 @@ public class InstagramUserComparator {
         notFollowingBack = new HashSet<>(followingSet);
         notFollowingBack.removeAll(followersSet);
 
-        System.out.println("Users you follow who don't follow you: " + notFollowingBack);
+        LOGGER.info("Users you follow who don't follow you: " + notFollowingBack);
         return notFollowingBack;
     }
 
-    public Set<String> extractUsernamesFromJsonArray (JSONArray jsonArray) {
+    public Set<String> extractUsernamesFromJsonArray(JSONArray jsonArray) {
         Set<String> arrayToSet = new HashSet<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {

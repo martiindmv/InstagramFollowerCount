@@ -3,6 +3,8 @@ package com.example.InstagramFollowerCount.controller;
 import com.example.InstagramFollowerCount.util.InstagramUserComparator;
 import com.example.InstagramFollowerCount.util.UserRelationshipData;
 import com.example.InstagramFollowerCount.util.JsonArrayMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import java.util.Set;
 
 @Controller
 public class FileUploadController {
+    private static final Logger LOGGER = LogManager.getLogger(FileUploadController.class);
+
     @Autowired
     private UserRelationshipData userRelationshipData;
     @Autowired
@@ -39,7 +43,6 @@ public class FileUploadController {
         return "redirect:/";
     }
 
-    //TODO Create maybe two more methods that accept a string format.
     //TODO we correctly process the message however the message appears as not resolved by thymeleaf.
 
     @PostMapping("/uploadStringFormat")
@@ -72,8 +75,6 @@ public class FileUploadController {
 
         instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
 
-        ApiController apiController = new ApiController(userRelationshipData);
-
         return "redirect:/";
     }
 
@@ -86,8 +87,6 @@ public class FileUploadController {
 
     @GetMapping("/getUsername")
     public String handleFileUpload(@RequestParam("username") String username) {
-
-        System.out.println("File username post: " + username);
 
         return "index";
     }

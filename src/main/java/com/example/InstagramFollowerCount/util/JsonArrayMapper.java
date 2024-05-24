@@ -1,14 +1,18 @@
 package com.example.InstagramFollowerCount.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JsonArrayMapper {
+    private static final Logger LOGGER = LogManager.getLogger(JsonArrayMapper.class);
+
     public JSONArray mapFileContentToJsonArray(String jsonContent) {
         JSONArray jsonArray = new JSONArray(jsonContent);
-        System.out.println("Followers Completed!");
+        LOGGER.info("Followers Completed!");
         return jsonArray;
     }
 
@@ -16,10 +20,10 @@ public class JsonArrayMapper {
         JSONObject jsonObject = new JSONObject(jsonContent);
         if (jsonObject.has("relationships_following")) {
             JSONArray jsonArray = jsonObject.getJSONArray("relationships_following");
-            System.out.println("Following Completed!");
+            LOGGER.info("Following Completed!");
             return jsonArray;
         } else {
-            System.out.println("Key of the file is not correct!");
+            LOGGER.error("Key of the file is not correct!");
         }
         return null;
     }

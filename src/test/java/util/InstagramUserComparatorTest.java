@@ -2,6 +2,8 @@ package util;
 
 import com.example.InstagramFollowerCount.util.InstagramUserComparator;
 import com.example.InstagramFollowerCount.util.UserRelationshipData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class InstagramUserComparatorTest {
+class InstagramUserComparatorTest {
+    private static final Logger logger = LogManager.getLogger(InstagramUserComparator.class);
+
     @Spy
     UserRelationshipData userRelationshipData;
     @Spy
@@ -28,7 +32,7 @@ public class InstagramUserComparatorTest {
 
     @Test
     @DisplayName("Test the creation of a Map when the size of the list of followers and following is equal.")
-    public void findNonFollowingBackUsersEqualFollowingAndFollowersTest() {
+    void findNonFollowingBackUsersEqualFollowingAndFollowersTest() {
         userRelationshipData.setArrayFollowers(loadJSON("followers"));
         userRelationshipData.setArrayFollowing(loadJSON("following"));
 
@@ -39,7 +43,7 @@ public class InstagramUserComparatorTest {
 
     @Test
     @DisplayName("Test the creation of a Map when the size of the list of followers and following is different.")
-    public void findNonFollowingBackUsersDifferentFollowingAndFollowersTest() {
+    void findNonFollowingBackUsersDifferentFollowingAndFollowersTest() {
         userRelationshipData.setArrayFollowers(loadJSON("followers_with_one_removed"));
         userRelationshipData.setArrayFollowing(loadJSON("following"));
 
@@ -53,7 +57,7 @@ public class InstagramUserComparatorTest {
 
     @Test
     @DisplayName("Test the logic of the extraction of the values from the JSON files and putting them in a set.")
-    public void extractUsernamesFromJsonArrayTest() {
+    void extractUsernamesFromJsonArrayTest() {
         JSONArray jsonArray = loadJSON("followers");
 
         Set<String> followersSet = instagramUserComparator.extractUsernamesFromJsonArray(jsonArray);
@@ -67,16 +71,15 @@ public class InstagramUserComparatorTest {
     public JSONArray loadJSON(String arrayName) {
         try {
             String jsonContent = new String(Files.readAllBytes(Paths.get("src/test/resources/JSON/" + arrayName + ".json")));
-            if(arrayName.startsWith("following")) {
+            if (arrayName.startsWith("following")) {
                 JSONObject jsonObject = new JSONObject(jsonContent);
                 return jsonObject.getJSONArray("relationships_following");
-            }
-            else {
+            } else {
                 return new JSONArray(jsonContent);
 
             }
         } catch (IOException e) {
-            System.out.println("Incorrect JSON file name!");
+            logger.error("Incorrect JSON file name!");
             return null;
         }
     }
