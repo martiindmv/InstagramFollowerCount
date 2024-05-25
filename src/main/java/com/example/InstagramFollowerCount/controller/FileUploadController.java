@@ -3,6 +3,7 @@ package com.example.InstagramFollowerCount.controller;
 import com.example.InstagramFollowerCount.util.InstagramUserComparator;
 import com.example.InstagramFollowerCount.util.UserRelationshipData;
 import com.example.InstagramFollowerCount.util.JsonArrayMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -31,7 +32,8 @@ public class FileUploadController {
     private InstagramUserComparator instagramUserComparator;
 
     @PostMapping("/uploadFollowers")
-    public String handleFollowersList(@RequestParam("followers") MultipartFile file) throws IOException {
+    @Operation(summary = "Upload followers", description = "This method accepts a file containing followers and processes it.")
+    public String fileWithFollowers(@RequestParam("followers") MultipartFile file) throws IOException {
         String contentFollowers = new String(file.getInputStream().readAllBytes());
 
         //Mapping the file to a JSON object
@@ -64,7 +66,8 @@ public class FileUploadController {
     }
 
     @PostMapping("/uploadFollowing")
-    public String handleFollowingList(@RequestParam("following") MultipartFile file) throws IOException {
+    @Operation(summary = "Upload following", description = "This method accepts a file containing the following list and processes it.")
+    public String fileWithFollowing(@RequestParam("following") MultipartFile file) throws IOException {
         String contentFollowing = new String(file.getInputStream().readAllBytes());
 
         //Mapping the file to a JSON object
