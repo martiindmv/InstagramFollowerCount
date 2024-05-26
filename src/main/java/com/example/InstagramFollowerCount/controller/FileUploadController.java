@@ -1,13 +1,14 @@
 package com.example.InstagramFollowerCount.controller;
 
 import com.example.InstagramFollowerCount.util.InstagramUserComparator;
-import com.example.InstagramFollowerCount.util.UserRelationshipData;
 import com.example.InstagramFollowerCount.util.JsonArrayMapper;
-import io.swagger.v3.oas.annotations.Operation;
+import com.example.InstagramFollowerCount.util.UserRelationshipData;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Controller
-public class FileUploadController {
+public class FileUploadController implements FileUploadDocs {
     private static final Logger LOGGER = LogManager.getLogger(FileUploadController.class);
 
     @Autowired
@@ -31,13 +32,22 @@ public class FileUploadController {
     @Autowired
     private InstagramUserComparator instagramUserComparator;
 
-    @PostMapping("/uploadFollowers")
-    @Operation(summary = "Upload followers", description = "This method accepts a file containing followers and processes it.")
-    public String fileWithFollowers(@RequestParam("followers") MultipartFile file) throws IOException {
+    //TODO Check whether you want the response entities to have a body and if the error 400 needs to be described in your openAPI documentation
+    @Override
+    public Object fileWithFollowers(@Valid @RequestParam("followers") MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("The file is empty");
+        }
+
         String contentFollowers = new String(file.getInputStream().readAllBytes());
 
         //Mapping the file to a JSON object
         JSONArray followersArray = jsonArrayMapper.mapFileContentToJsonArray(contentFollowers);
+
+        // If the JSON array is null or empty, return a bad request response
+        if (followersArray == null || followersArray.isEmpty()) {
+            return ResponseEntity.badRequest().body("The file content is not valid");
+        }
 
         //Assign an object in JSONArrays file in order to compare after
         userRelationshipData.setArrayFollowers(followersArray);
@@ -45,8 +55,23 @@ public class FileUploadController {
         return "redirect:/";
     }
 
-    //TODO we correctly process the message however the message appears as not resolved by thymeleaf.
+    @Override
+    public String fileWithFollowing(@Valid @RequestParam("following") MultipartFile file) throws IOException {
 
+        String contentFollowing = new String(file.getInputStream().readAllBytes());
+
+        //Mapping the file to a JSON object
+        JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(contentFollowing);
+
+        //Assign an object in JSONArrays file in order to compare after
+        userRelationshipData.setArrayFollowing(followingArray);
+
+        instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
+
+        return "redirect:/";
+    }
+
+    //TODO we correctly process the message however the message appears as not resolved by thymeleaf.
     @PostMapping("/uploadStringFormat")
     public String postJsonText(@RequestBody Map<String, String> body) {
         String jsonFollowers = body.get("jsonFollowers");
@@ -58,22 +83,6 @@ public class FileUploadController {
         //Assign an object in JSONArrays file in order to compare after
         userRelationshipData.setArrayFollowers(followersArray);
 
-        userRelationshipData.setArrayFollowing(followingArray);
-
-        instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
-
-        return "redirect:/";
-    }
-
-    @PostMapping("/uploadFollowing")
-    @Operation(summary = "Upload following", description = "This method accepts a file containing the following list and processes it.")
-    public String fileWithFollowing(@RequestParam("following") MultipartFile file) throws IOException {
-        String contentFollowing = new String(file.getInputStream().readAllBytes());
-
-        //Mapping the file to a JSON object
-        JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(contentFollowing);
-
-        //Assign an object in JSONArrays file in order to compare after
         userRelationshipData.setArrayFollowing(followingArray);
 
         instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
