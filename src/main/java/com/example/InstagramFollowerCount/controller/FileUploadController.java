@@ -3,7 +3,6 @@ package com.example.InstagramFollowerCount.controller;
 import com.example.InstagramFollowerCount.util.InstagramUserComparator;
 import com.example.InstagramFollowerCount.util.JsonArrayMapper;
 import com.example.InstagramFollowerCount.util.UserRelationshipData;
-import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,46 +32,40 @@ public class FileUploadController implements FileUploadDocs {
     @Autowired
     private InstagramUserComparator instagramUserComparator;
 
-    //TODO Check whether you want the response entities to have a body and if the error 400 needs to be described in your openAPI documentation
     @Override
-    public Object fileWithFollowers(@Valid @RequestParam("followers") MultipartFile file) throws IOException {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("The file is empty");
+    public Object fileWithFollowers(@RequestPart("followers") MultipartFile file) throws IOException {
+
+        try {
+            String contentFollowers = new String(file.getInputStream().readAllBytes());
+            JSONArray followersArray = jsonArrayMapper.mapFileContentToJsonArray(contentFollowers);
+            userRelationshipData.setArrayFollowers(followersArray);
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body("The followers file content is invalid.");
         }
-
-        String contentFollowers = new String(file.getInputStream().readAllBytes());
-
-        //Mapping the file to a JSON object
-        JSONArray followersArray = jsonArrayMapper.mapFileContentToJsonArray(contentFollowers);
-
-        // If the JSON array is null or empty, return a bad request response
-        if (followersArray == null || followersArray.isEmpty()) {
-            return ResponseEntity.badRequest().body("The file content is not valid");
-        }
-
-        //Assign an object in JSONArrays file in order to compare after
-        userRelationshipData.setArrayFollowers(followersArray);
-
         return "redirect:/";
     }
 
     @Override
-    public String fileWithFollowing(@Valid @RequestParam("following") MultipartFile file) throws IOException {
+    public Object fileWithFollowing(@RequestParam("following") MultipartFile file) throws IOException {
+        try {
 
-        String contentFollowing = new String(file.getInputStream().readAllBytes());
+            String contentFollowing = new String(file.getInputStream().readAllBytes());
 
-        //Mapping the file to a JSON object
-        JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(contentFollowing);
+            //Mapping the file to a JSON object
+            JSONArray followingArray = jsonArrayMapper.mapFileContentWithKeyToJsonArray(contentFollowing);
 
-        //Assign an object in JSONArrays file in order to compare after
-        userRelationshipData.setArrayFollowing(followingArray);
+            //Assign an object in JSONArrays file in order to compare after
+            userRelationshipData.setArrayFollowing(followingArray);
+            instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
 
-        instagramUserComparator.findNonFollowingBackUsers(userRelationshipData);
-
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body("The followers file content is invalid.");
+        }
         return "redirect:/";
     }
 
     //TODO we correctly process the message however the message appears as not resolved by thymeleaf.
+    //TODO Add this on swagger.
     @PostMapping("/uploadStringFormat")
     public String postJsonText(@RequestBody Map<String, String> body) {
         String jsonFollowers = body.get("jsonFollowers");
